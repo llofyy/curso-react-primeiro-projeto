@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import './styles.css';
 
@@ -7,93 +7,49 @@ import Posts from '../../components/Posts';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 
+export default function Home() {
+  const [allPosts, setAllPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
 
-export default class Home extends Component {
-    state = {
-      posts: [],
-      allPosts: [],
-      page: 0,
-      postsPerPage: 10,
-      searchValue: ''
-    };
-    
-    async componentDidMount() {
-      await this.loadPosts();
-    }
+  const postsPerPage = 10;
 
-    loadPosts = async () => {
-      const {page, postsPerPage} = this.state;
-      const postsAndPhotos = await loadPosts();
-      this.setState({
-        posts: postsAndPhotos.slice(page, postsPerPage),
-        allPosts: postsAndPhotos
-      });
-    }
+  const noMorePosts = page + postsPerPage >= allPosts.length;
+  const filteredPosts = !!searchValue ? allPosts.filter(post => post.title.toLowerCase().includes(searchValue)) : posts;
 
-    loadMorePosts = () => {
-      const {
-        page,
-        postsPerPage,
-        allPosts,
-        posts
-      } = this.state;
+  const handleLoadPosts = useCallback(async (page, postsPerPage) => {
+    const postsAndPhotos = await loadPosts();
+    setPosts(postsAndPhotos.slice(page, postsPerPage));
+    setAllPosts(postsAndPhotos);
+  }, [])
 
-      const nextPage = page + postsPerPage;
-      const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);  
+  useEffect(() => {
+    handleLoadPosts(0, postsPerPage);
+  }, [handleLoadPosts, postsPerPage]);
 
-      posts.push(...nextPosts);
+  const handleLoadMorePosts = () => {
+    const nextPage = page + postsPerPage;
+    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);  
 
-      this.setState({
-        posts,
-        page: nextPage
-      });
-    }
-
-    handleChange = (e) => {
-      const { value } = e.target;
-
-      this.setState({
-        searchValue: value
-      });
-    }
-
-  render() {
-      const { posts, page, postsPerPage, allPosts, searchValue } = this.state;
-      const noMorePosts = page + postsPerPage >= allPosts.length;
-
-      const filteredPosts = !!searchValue ? allPosts.filter(post => post.title.toLowerCase().includes(searchValue)) : posts;
-
-      return (
-            <section className="container">
-                <TextInput onChange={this.handleChange} value={searchValue} />
-                {filteredPosts.length > 0 ? <Posts posts={filteredPosts}/> : <p>{searchValue} não existe :(</p>}
-                <div className="button-container">
-                  {!searchValue &&  <Button onClick={this.loadMorePosts} text="Load More Posts" disabled={noMorePosts} />}
-                </div>
-            </section>
-          );
-    }
+    setPosts([...posts, ...nextPosts]);
+    setPage(nextPage);
   }
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setSearchValue(value);
+  }
+
+  return (
+    <section className="container">
+        <TextInput onChange={handleChange} value={searchValue} />
+        {filteredPosts.length > 0 ? <Posts posts={filteredPosts}/> : <p>{searchValue} não existe :(</p>}
+        <div className="button-container">
+          {!searchValue &&  <Button onClick={handleLoadMorePosts} text="Load More Posts" disabled={noMorePosts} />}
+        </div>
+    </section>
+  );
+}
 
 
