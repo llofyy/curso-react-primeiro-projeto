@@ -46,7 +46,7 @@ export default function Home() {
         <TextInput onChange={handleChange} value={searchValue} />
         {filteredPosts.length > 0 ? <Posts posts={filteredPosts}/> : <p>{searchValue} não existe :(</p>}
         <div className="button-container">
-          {!searchValue &&  <Button onClick={handleLoadMorePosts} text="Load More Posts" disabled={noMorePosts} />}
+          {!searchValue &&  <Button onClick={handleLoadMorePosts} text="Carregar mais" disabled={noMorePosts} />}
         </div>
     </section>
   );
