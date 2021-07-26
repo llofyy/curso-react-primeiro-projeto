@@ -29,4 +29,10 @@ describe('<Button />', () => {
         const button = screen.getByRole('button', { name: /carregar mais/i });
         expect(button).toBeEnabled();
     });
+
+    it('should match snapshot', () => {
+        const fn = jest.fn();
+        const { container } = render(<Button text="Carregar mais" disabled={false} onClick={fn} />);
+        expect(container.firstChild).toMatchSnapshot();
+    });
 });

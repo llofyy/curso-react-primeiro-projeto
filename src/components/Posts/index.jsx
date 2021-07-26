@@ -1,8 +1,8 @@
-import { PostCard } from "../PostCard"
+import PostCard from "../PostCard"
 
 import './styles.css';
 
-export default function Posts({posts}) {
+export default function Posts({posts = []}) {
     return (
         <div className="posts">
             {posts.map(post => {

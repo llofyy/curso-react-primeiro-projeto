@@ -2,7 +2,7 @@ import React from 'react';
 
 import './styles.css';
 
-export function PostCard({ title, body, cover }) {
+export default function PostCard({ title, body, cover }) {
     return (
         <div className="post">
             <img src={cover} alt={title} />
