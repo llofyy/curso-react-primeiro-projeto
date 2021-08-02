@@ -13,10 +13,6 @@ export default function Posts({ posts = [] }) {
   );
 }
 
-Posts.defaultProps = {
-  posts: [],
-};
-
 Posts.propTypes = {
   posts: Types.array,
 };
