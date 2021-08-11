@@ -13,7 +13,7 @@ export default function Home() {
   const [page, setPage] = useState(0);
   const [searchValue, setSearchValue] = useState('');
 
-  const postsPerPage = 10;
+  const postsPerPage = 2;
 
   const noMorePosts = page + postsPerPage >= allPosts.length;
   const filteredPosts = searchValue ? allPosts.filter((post) => post.title.toLowerCase().includes(searchValue)) : posts;
@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <section className="container">
       <TextInput onChange={handleChange} value={searchValue} />
-      {filteredPosts.length > 0 ? <Posts posts={filteredPosts} /> : <p>{searchValue} não existe :(</p>}
+      {filteredPosts.length > 0 ? <Posts posts={filteredPosts} /> : <p>não existem posts :(</p>}
       <div className="button-container">
         {!searchValue && <Button onClick={handleLoadMorePosts} text="Carregar mais" disabled={noMorePosts} />}
       </div>
